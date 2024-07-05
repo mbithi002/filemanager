@@ -23,7 +23,7 @@ function App() {
   }, [dispatch])
 
   return loading ? (
-    <Spinner />
+    <Spinner w='full' h='screen' />
   ) : (
     <div className="min-h-screen flex flex-wrap content between bg-white text-white">
       <div className="w-full block">
