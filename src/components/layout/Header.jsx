@@ -31,9 +31,6 @@ const Header = () => {
             </Link>
             {status ? (
               <>
-                <Link to="/file-list" className="hover:underline">
-                  <i class="fa-solid fa-file text-green-300"></i> Files
-                </Link>
                 <Link to="/dashboard" className="hover:underline">
                   <i class="fa-solid fa-chart-line text-green-300"></i> Dashboard
                 </Link>

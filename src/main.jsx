@@ -5,7 +5,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import Protected from './components/layout/AuthLayout.jsx'
 import './index.css'
-import { Dashboard, FileItem, FileList, FileUpload, Home, Login, NotFound, Signup } from './pages/pages.js'
+import { Dashboard, Home, Login, NotFound, Signup } from './pages/pages.js'
 import store from './store/store.js'
 
 const router = createBrowserRouter([
@@ -32,30 +32,6 @@ const router = createBrowserRouter([
             <Signup />
           </Protected>
         ),
-      },
-      {
-        path: '/file-item/:slug',
-        element: (
-          <Protected authentication={ true }>
-            <FileItem/>
-          </Protected>
-        )
-      },
-      {
-        path: '/file-list',
-        element: (
-          <Protected authentication={ true }>
-            <FileList/>
-          </Protected>
-        )
-      },
-      {
-        path: '/file-upload',
-        element: (
-          <Protected authentication={ true }>
-            <FileUpload/>
-          </Protected>
-        )
       },
       {
         path: '/dashboard',
