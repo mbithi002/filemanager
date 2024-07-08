@@ -23,7 +23,7 @@ const Header = () => {
       <header className="hidden sm:block bg-blue-500 text-white shadow-md mb-30 fixed top-0 w-full z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="text-2xl font-bold">
-            <Link to="/">File Manager<i class="fa-regular fa-file mx-2"></i></Link>
+            <Link to="/">bucketHub<i class="fa-regular fa-file mx-2"></i></Link>
           </div>
           <nav className="space-x-4 flex justify-between items-center">
             <Link to="/" className="hover:underline">

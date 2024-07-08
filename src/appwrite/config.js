@@ -22,15 +22,36 @@ export class Service {
         file
       );
     } catch (error) {
-      console.log("app-write Service :: createFile() ::>>> ", error);
+      console.log("Appwrite service :: uploadFile() :: ", error);
       return false;
     }
   }
 
-  async getPreview() {
+  async serviceCreateDocument(fileId, metadata) {
     try {
-      return await this.bucket.getFilePreview(conf.appwriteBucketId, fileId)
-        .href;
+      const response = await this.databases.createDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
+        ID.unique(),
+        {
+          fileId,
+          metadata,
+        }
+      );
+      return response;
+    } catch (error) {
+      console.log("app-write Service :: createDocument() ::>>> ", error);
+      return false;
+    }
+  }
+
+  async getPreview(fileId) {
+    try {
+      const response = await this.bucket.getFilePreview(
+        conf.appwriteBucketId,
+        fileId
+      );
+      return response.href;
     } catch (error) {
       console.log("app-write Service :: getPreview() ::>>> ", error);
       return false;

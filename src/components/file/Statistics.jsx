@@ -14,7 +14,7 @@ function Statistics() {
       datasets: [
         {
           label: 'Files Per Day',
-          data: [65, 59, 80, 81, 56, 55, 40],
+          data: [2, 12, 8, 8, 6, 7, 3],
           fill: false,
           borderColor: 'rgb(75, 192, 192)',
           tension: 0,

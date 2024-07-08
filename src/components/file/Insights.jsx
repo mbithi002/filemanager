@@ -1,6 +1,6 @@
 import Chart from 'chart.js/auto';
 import React, { useEffect, useRef, useState } from 'react';
-import { Audio as AudioComponent, Images as ImagesComponent, Others as OthersComponent, PDF as PDFComponent, Video as VideoComponent } from '../../assets/google/Icons';
+import { Audio as AudioComponent, Doc as DocComponent, Images as ImagesComponent, Others as OthersComponent, Video as VideoComponent } from '../../assets/google/Icons';
 
 function Insights() {
   const chartRef = useRef(null);
@@ -38,6 +38,11 @@ function Insights() {
           label: 'Files',
           data: filesData,
           backgroundColor: [
+            // '#FF6384',
+            // '#36A2EB',
+            // '#FFCE56',
+            // '#4BC0C0',
+            // '#9966FF',
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
             'rgba(255, 206, 86, 0.2)',
@@ -45,7 +50,7 @@ function Insights() {
             'rgba(153, 102, 255, 0.2)',
           ],
           borderColor: [
-            '#232323',
+            '#000',
           ],
           borderWidth: 0.1,
         },
@@ -67,7 +72,7 @@ function Insights() {
       </div>
       <div className="flex flex-row justify-around items-center gap-2 p-2 rounded-md shadow-xl">
         <div className="flex flex-col mt-2">
-          <PDFComponent />
+          <DocComponent />
           <p className="text-center">{filesData[0]}</p>
         </div>
         <div className="flex flex-col mt-2">

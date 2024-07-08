@@ -1,65 +1,121 @@
-import React, { useState } from 'react'
-// import { Input, Button, Select } from '../components'
-import { v4 as uuidv4 } from 'uuid'
-import service from '../../appwrite/config'
-import conf from '../../conf/conf'
-import { Toaster } from '../components'
+import { Client, Databases, ID, Storage } from 'appwrite';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import conf from '../../conf/conf';
+import { FullLoader } from '../components';
 
 function FileUpload() {
-  const [file, setFile] = useState(null)
-  const [preview, setPreview] = useState(null)
-  const [loading, setLoading] = useState(0)
-  const [toast, setToast] = useState(0)
+  const { status, userData } = useSelector((state) => state.auth)
+  const [file, setFile] = useState(null);
+  const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
+  const d = new Date()
 
-  const handleFileChange = (e) => {
-    e.preventDefault()
-    setToast(0)
-    setLoading(0)
+  const types = [
+    'image/png', 'image/jpeg', 'image/jpg',
+    'image/gif', 'image/bmp', 'image/svg+xml',
+    'application/pdf', 'text/plain', 'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/zip', 'application/x-rar-compressed'
+  ];
+
+  const client = new Client();
+  client
+    .setEndpoint(conf.appwriteUrl)
+    .setProject(conf.appwriteProjectId);
+
+  const storage = new Storage(client);
+  const databases = new Databases(client);
+
+  const uploadFile = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
     try {
-      const selectedFile = e.target.files[0]
-      setFile(selectedFile)
-      if (selectedFile && selectedFile.type.startsWith('image/')) {
-        const reader = new FileReader()
-        reader.onload = () => {
-          setPreview(reader.result)
-        }
-        reader.readAsDataURL(selectedFile)
-      } else {
-        setPreview(null)
-        setToast("No preview")
+      if (!file) {
+        throw new Error('No file selected');
       }
-    } catch (error) {
-      setLoading(0)
-      setToast(error.message)
-      return
-    }
-  }
-  const handleFileUpload = async () => {
-    if (!file) setToast("No preview")
-    try {
-      const res = await service.serviceCreateFile(
+
+      if (!types.includes(file.type)) {
+        throw new Error('Unsupported file type');
+      }
+
+      const fileResponse = await storage.createFile(
         conf.appwriteBucketId,
-        uuidv4(),
-        file,
-      )
-      res ? (setToast('upload complete')) : (setToast('Failed to Upload'))
-      console.log(res);
-      setLoading(0)
-      return res
+        ID.unique(),
+        file
+      );
+
+      const fileId = fileResponse.$id;
+      const metaData = JSON.stringify({
+        user: userData,
+        description: description,
+        date: {
+          year: d.getFullYear(),
+          month: d.getMonth() + 1,
+          day: d.getDate(),
+        },
+        time: {
+          hours: d.getHours(),
+          minutes: d.getMinutes(),
+          seconds: d.getSeconds()
+        }
+      })
+
+      const metadataResponse = await databases.createDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
+        ID.unique(),
+        {
+          fileId,
+          metaData,
+        }
+      );
+      console.log('File and metadata uploaded successfully:', { fileResponse, metadataResponse });
+      setFile(null)
+      setDescription('')
     } catch (error) {
-      setToast("Failed to upload")
-      console.error('File upload failed', error);
-      return
+      console.error('File upload failed:', error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   return (
-    <div>
-      {toast ? (<Toaster message={toast} />) : ('')}
-      <input type="file" onChange={handleFileChange} className='p-2 bg-green-500 rounded-md m-2' />
-      {preview && <img src={preview} alt="Preview" width="200" />}
-      <button onClick={handleFileUpload} className='p-2 bg-green-500 rounded-md m-2'>Upload File</button>
-    </div>
-  )
+    <>
+      {loading ? <FullLoader message='Uploading file...' /> : null}
+      <div className="flex flex-col justify-around">
+        <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 self-center">
+          Upload file
+        </p>
+        <form onSubmit={uploadFile} className="upload-form">
+          <div>
+            <label htmlFor="file">File:</label>
+            <input type="file" id="file" onChange={handleFileChange} required />
+          </div>
+          <div>
+            <label htmlFor="description">Description:</label>
+            <input
+              type="text"
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" disabled={loading}>
+            Upload
+          </button>
+        </form>
+      </div>
+    </>
+  );
 }
 
-export default FileUpload
+export default FileUpload;

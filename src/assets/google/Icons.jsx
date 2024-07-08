@@ -52,5 +52,35 @@ const Others = ({ h = "32px", w = "32px", c = '#232323' }) => {
   )
 }
 
-export { Audio, Images, Others, PDF, Video };
+const Share = ({ h = "32px", w = "32px", c = '#232323' }) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" height={h} viewBox="0 -960 960 960" width={w}
+      fill={c}>
+      <path
+        d="M120-160v-640l760 320-760 320Zm60-93 544-227-544-230v168l242 62-242 60v167Zm0 0v-457 457Z" />
+    </svg>
+  )
+}
+
+const Download = ({ h = "32px", w = "32px", c = '#232323' }) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" height={h} viewBox="0 -960 960 960" width={w}
+      fill={c}>
+      <path
+        d="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z" />
+    </svg>
+  )
+}
+
+
+const Doc = ({ h = "32px", w = "32px", c = '#232323' }) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" height={h} viewBox="0 -960 960 960" width={w}
+      fill={c}>
+      <path
+        d="M140-160q-24 0-42-18.5T80-220v-520q0-23 18-41.5t42-18.5h281l60 60h339q23 0 41.5 18.5T880-680v460q0 23-18.5 41.5T820-160H140Zm0-60h680v-460H456l-60-60H140v520Zm0 0v-520 520Z" />
+    </svg>
+  )
+}
+export { Audio, Doc, Download, Images, Others, PDF, Share, Video };
 
