@@ -5,6 +5,7 @@ import conf from '../../conf/conf';
 import { FullLoader } from '../components';
 
 function FileUpload() {
+  const [error, setError] = useState('')
   const { status, userData } = useSelector((state) => state.auth)
   const [file, setFile] = useState(null);
   const [description, setDescription] = useState('');
@@ -35,19 +36,22 @@ function FileUpload() {
 
     try {
       if (!file) {
+        setError('Please Select a File')
         throw new Error('No file selected');
       }
 
       if (!types.includes(file.type)) {
+        setError('Please Select a valid file type')
         throw new Error('Unsupported file type');
       }
 
       const fileResponse = await storage.createFile(
         conf.appwriteBucketId,
         ID.unique(),
-        file
+        file,
+        // ['user:' + userData.$id]
       );
-
+      if (!fileResponse) setError('Failed to upload')
       const fileId = fileResponse.$id;
       const metaData = JSON.stringify({
         user: userData,
@@ -77,11 +81,19 @@ function FileUpload() {
       setFile(null)
       setDescription('')
     } catch (error) {
+      setError(error.message);
       console.error('File upload failed:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleCancel = (e) => {
+    e.preventDefault()
+    setFile(null)
+    setDescription('')
+    return
+  }
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -94,6 +106,12 @@ function FileUpload() {
         <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 self-center">
           Upload file
         </p>
+        {error && (
+          <div className="flex flex-col items-start">
+            <div onClick={(e) => setError('')} className="flex"><i class="fa-solid fa-xmark mx-2 text-red-500 text-sm"></i></div>
+            <div className="text-red-500 text-center bg-white w-full p-2 text-md">{error}</div>
+          </div>
+        )}
         <form onSubmit={uploadFile} className="upload-form px-2 py-10 border border-gray-500 rounded-lg justify-between">
           <div className='flex flex-col gap-3 mb-2'>
             <label htmlFor="file" >File</label>
@@ -114,8 +132,13 @@ function FileUpload() {
           <button type="submit" disabled={loading} className='py-1 rounded-[2rem] mx-2 my-1 bg-green-500 active:bg-green-500 transition-all duration-200 hover:bg-green-400 text-white px-4'>
             Upload<i class="fa-solid fa-upload text-white mx-2 text-sm"></i>
           </button>
-          <button className="py-1 px-4 bg-red-600 hover:bg-red-500 active:bg-red-600 transition-all duration-200 text-white rounded-[2rem] mx-2 my-1 cursor-pointer">Cancel<i class="fa-solid fa-xmark mx-2 text-white text-sm"></i></button>
         </form>
+        <button
+          onClick={handleCancel}
+          className="w-1/4 py-1 px-4 bg-red-600 hover:bg-red-500 active:bg-red-600 transition-all duration-200 text-white rounded-[2rem] mx-2 my-1 cursor-pointer"
+        >
+          Cancel
+        </button>
       </div>
     </>
   );
