@@ -1,28 +1,108 @@
+import { Client, Databases, Storage } from 'appwrite';
 import Chart from 'chart.js/auto';
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Audio as AudioComponent, Doc as DocComponent, Images as ImagesComponent, Others as OthersComponent, Video as VideoComponent } from '../../assets/google/Icons';
+import conf from '../../conf/conf';
 
 function Insights() {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [filesData, setFilesData] = useState([0, 0, 0, 0, 0]);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(null);
+  const { userData } = useSelector((state) => state.auth);
+  const client = new Client();
+  client
+    .setEndpoint(conf.appwriteUrl)
+    .setProject(conf.appwriteProjectId);
 
-  // fetch filesData from server>>>
-  const allFiles = [12, 19, 31, 5, 2];
+  const databases = new Databases(client);
+  const storage = new Storage(client);
+  const categories = {
+    Documents: 0,
+    Images: 0,
+    Video: 0,
+    Audio: 0,
+    Others: 0,
+  };
 
   useEffect(() => {
-    const findTotal = () => {
-      let sum = 0;
-      allFiles.forEach((item) => {
-        sum += item;
-      });
-      return sum;
+    const fetchFilesData = async () => {
+      const getFiles = async () => {
+        const response = await storage.listFiles(
+          conf.appwriteBucketId,
+        );
+        return response;
+      }
+
+      const getDocs = async () => {
+        const response = await databases.listDocuments(
+          conf.appwriteDatabaseId,
+          conf.appwriteCollectionId,
+        );
+        return response
+      }
+
+      const userFiles = async () => {
+        const files = await getFiles()
+        const docs = await getDocs()
+
+        const dbFiles = await files.files
+
+        const getUserDocs = async () => {
+          let arr = []
+          docs.documents.forEach((doc) => {
+            if (JSON.parse(doc.metaData).user === userData.$id) {
+              arr.push(doc)
+            }
+          })
+          return arr
+        }
+        const userDocs = await getUserDocs()
+
+        // console.log(dbFiles, userDocs);
+
+        const filteredFiles = dbFiles.filter(file => userDocs.some(doc => doc.fileId === file.$id));
+        console.log(filteredFiles.length);
+        setTotal(filteredFiles.length)
+
+        // filteredFiles.forEach((file) => {
+        //   console.log(file.mimeType);
+        // })
+
+        filteredFiles.forEach(file => {
+          const type = file.mimeType;
+
+          if (type.includes('image')) {
+            categories.Images += 1;
+          } else if (type.includes('video')) {
+            categories.Video += 1;
+          } else if (type.includes('audio')) {
+            categories.Audio += 1;
+          } else if (type.includes('document') || type.includes('text') || type.includes('pdf') || type.includes('word') || type.includes('excel') || type.includes('powerpoint')) {
+            categories.Documents += 1;
+          } else {
+            categories.Others += 1;
+          }
+        });
+
+        setFilesData([
+          categories.Documents,
+          categories.Images,
+          categories.Video,
+          categories.Audio,
+          categories.Others,
+        ]);
+
+
+      }
+      userFiles()
     };
 
-    setTotal(findTotal());
-    setFilesData(allFiles);
-  }, []);
+    fetchFilesData();
+  }, [userData]);
+
+
 
   useEffect(() => {
     if (chartInstanceRef.current) {
@@ -38,20 +118,13 @@ function Insights() {
           label: 'Files',
           data: filesData,
           backgroundColor: [
-            // '#FF6384',
-            // '#36A2EB',
-            // '#FFCE56',
-            // '#4BC0C0',
-            // '#9966FF',
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
             'rgba(255, 206, 86, 0.2)',
             'rgba(75, 192, 192, 0.2)',
             'rgba(153, 102, 255, 0.2)',
           ],
-          borderColor: [
-            '#000',
-          ],
+          borderColor: ['#000'],
           borderWidth: 0.1,
         },
       ],
@@ -61,7 +134,6 @@ function Insights() {
       type: 'pie',
       data: data,
     });
-
   }, [filesData]);
 
   return (

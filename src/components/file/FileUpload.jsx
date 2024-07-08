@@ -12,15 +12,15 @@ function FileUpload() {
   const [loading, setLoading] = useState(false);
   const d = new Date()
 
-  const types = [
-    'image/png', 'image/jpeg', 'image/jpg',
-    'image/gif', 'image/bmp', 'image/svg+xml',
-    'application/pdf', 'text/plain', 'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'application/zip', 'application/x-rar-compressed'
-  ];
+  // const types = [
+  //   'image/png', 'image/jpeg', 'image/jpg',
+  //   'image/gif', 'image/bmp', 'image/svg+xml',
+  //   'application/pdf', 'text/plain', 'application/msword',
+  //   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  //   'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //   'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  //   'application/zip', 'application/x-rar-compressed'
+  // ];
 
   const client = new Client();
   client
@@ -33,6 +33,7 @@ function FileUpload() {
   const uploadFile = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setError('')
 
     try {
       if (!file) {
@@ -40,10 +41,10 @@ function FileUpload() {
         throw new Error('No file selected');
       }
 
-      if (!types.includes(file.type)) {
-        setError('Please Select a valid file type')
-        throw new Error('Unsupported file type');
-      }
+      // if (!types.includes(file.type)) {
+      //   setError('Please Select a valid file type')
+      //   throw new Error('Unsupported file type');
+      // }
 
       const fileResponse = await storage.createFile(
         conf.appwriteBucketId,
@@ -54,7 +55,7 @@ function FileUpload() {
       if (!fileResponse) setError('Failed to upload')
       const fileId = fileResponse.$id;
       const metaData = JSON.stringify({
-        user: userData,
+        user: userData.$id,
         description: description,
         date: {
           year: d.getFullYear(),
