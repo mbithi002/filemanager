@@ -94,14 +94,16 @@ function FileUpload() {
         <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 self-center">
           Upload file
         </p>
-        <form onSubmit={uploadFile} className="upload-form">
-          <div>
-            <label htmlFor="file">File:</label>
-            <input type="file" id="file" onChange={handleFileChange} required />
+        <form onSubmit={uploadFile} className="upload-form px-2 py-10 border border-gray-500 rounded-lg justify-between">
+          <div className='flex flex-col gap-3 mb-2'>
+            <label htmlFor="file" >File</label>
+            <input type="file" id="file" onChange={handleFileChange} required className='p-2 text-white bg-teal-400 text-sm rounded-md cursor-pointer hover:bg-teal-500 active:bg-teal-300 transition-all duration-200' />
           </div>
+          {/* <hr className='border border-t-gray-800 m-2' /> */}
           <div>
-            <label htmlFor="description">Description:</label>
+            <label htmlFor="description" className="m-2 p-1">Description:</label>
             <input
+              className='w-full bg-transparent border h-[2rem] my-2 p-2 border-gray-700 rounded-md'
               type="text"
               id="description"
               value={description}
@@ -109,9 +111,10 @@ function FileUpload() {
               required
             />
           </div>
-          <button type="submit" disabled={loading}>
-            Upload
+          <button type="submit" disabled={loading} className='py-1 rounded-[2rem] mx-2 my-1 bg-green-500 active:bg-green-500 transition-all duration-200 hover:bg-green-400 text-white px-4'>
+            Upload<i class="fa-solid fa-upload text-white mx-2 text-sm"></i>
           </button>
+          <button className="py-1 px-4 bg-red-600 hover:bg-red-500 active:bg-red-600 transition-all duration-200 text-white rounded-[2rem] mx-2 my-1 cursor-pointer">Cancel<i class="fa-solid fa-xmark mx-2 text-white text-sm"></i></button>
         </form>
       </div>
     </>
