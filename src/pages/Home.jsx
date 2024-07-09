@@ -1,10 +1,12 @@
 import React from 'react';
 import { HeroFind, HeroOrganise, HeroShare, HeroTwo, HeroUpload } from '../assets/assets';
-
+import { Toaster } from '../components/components';
 
 function Home() {
   return (
     <div className="text-center min-h-screen w-full p-10  bg-gray-200">
+      
+      <Toaster message={'Success'} iconType={'success'} duration={'5000'}/>
       <div className="container my-10">
         <div className="grid sm:grid-cols-2 min-h-[70dvh] p-3 gap-5">
           <div className="flex flex-col justify-between">
