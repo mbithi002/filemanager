@@ -17,15 +17,7 @@ function Statistics() {
 
   useEffect(() => {
 
-    function loger(files) {
-      files.forEach((file) => {
-        console.log(file);
-      })
-    }
-
     const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
-    console.log(d.getUTCDay())
-    loger(filesArray)
 
     const handleToaster = () => {
       setTimeout(() => {

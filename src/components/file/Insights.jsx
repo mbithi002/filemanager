@@ -9,6 +9,7 @@ function Insights() {
   const chartInstanceRef = useRef(null);
   const { userData } = useSelector((state) => state.auth);
   const { filesData, total, allFiles } = useUserFiles(userData);
+
   useEffect(() => {
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
@@ -40,6 +41,7 @@ function Insights() {
       data: data,
     });
   }, [filesData]);
+
 
   return (
     <div className="container flex flex-col justify-around items-center h-full w-full">

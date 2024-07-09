@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Audio as AudioComponent, Doc as DocComponent, Download as DownloadComponent, Images as ImageComponent, Others as OthersComponent, Share as ShareComponent, Video as VideoComponent } from '../../assets/google/Icons';
 import useUserFiles from '../../hooks/useUserFiles';
-import { Toaster } from '../components';
+import { CustomSpinner, Toaster } from '../components';
 
 function Files() {
   const { userData } = useSelector((state) => state.auth);
   const { allFiles } = useUserFiles(userData);
+  const [isMounted, setIsMounted] = useState(false);
 
 
   const renderFileCard = (file, IconComponent, borderColor, textColor) => (
@@ -61,8 +62,14 @@ function Files() {
 
   // Ensure allFiles is defined and is an array
   const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
-  const categorizedFiles = categorizeFiles(filesArray);
 
+  useEffect (() => {
+    if (allFiles) setIsMounted(true)
+  }, [allFiles])
+  const categorizedFiles = categorizeFiles(filesArray);
+  if (!isMounted) return (
+    <CustomSpinner />
+  )
   return (
     <div className="container p-2 bg-white text-[#232323] h-full overflow-y-scroll scrollbar-y max-h-[75dvh]">
       <Toaster message={'View your Files'} iconType={'info'} duration={'2000'} />
