@@ -2,7 +2,7 @@ import { Client, Databases, ID, Storage } from 'appwrite';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import conf from '../../conf/conf';
-import { FullLoader } from '../components';
+import { FullLoader, Toaster } from '../components';
 
 function FileUpload() {
   const [error, setError] = useState('');
@@ -11,7 +11,7 @@ function FileUpload() {
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState('');
-  const [success, setSuccess] = useState('')
+  const [toaster, setToaster] = useState({ message: 'Fill up the fields to upload', type: 'info', duration: 2000 })
   const d = new Date();
 
   const client = new Client();
@@ -37,7 +37,6 @@ function FileUpload() {
         conf.appwriteBucketId,
         ID.unique(),
         file,
-        // ['user:' + userData.$id]
       );
       if (!fileResponse) {
         setError('Failed to upload');
@@ -76,22 +75,17 @@ function FileUpload() {
           metaData,
         }
       );
-      console.log('File and metadata uploaded successfully:', { fileResponse, metadataResponse });
-      setSuccess('File Upload complete')
-      const handleSuccess = () => {
-        setTimeout(() => {
-          setSuccess('')
-        }, 300);
-      }
-      handleSuccess()
+      metadataResponse && setToaster({ message: '1 file uploaded', type: 'success', duration: 3000 })
       setFile(null);
       setDescription('');
       setPreview()
 
     } catch (error) {
       setError(error.message);
+      setToaster({ message: 'Failed to upload', type: 'error', duration: 3000 })
       console.error('File upload failed:', error);
     } finally {
+      setToaster({ message: '1 file uploaded', type: 'success', duration: 3000 })
       setLoading(false);
     }
   };
@@ -119,6 +113,8 @@ function FileUpload() {
   return (
     <>
       {loading ? <FullLoader message='Uploading file...' /> : null}
+      <Toaster message={toaster.message} iconType={toaster.type} duration={toaster.duration} />
+
       <div className="flex flex-col justify-around">
         <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 self-center">
           Upload file
@@ -129,14 +125,6 @@ function FileUpload() {
               <i className="fa-solid fa-xmark mx-2 text-red-500 text-sm"></i>
             </div>
             <div className="text-red-500 text-center bg-white w-full p-2 text-md">{error}</div>
-          </div>
-        )}
-        {success && (
-          <div className="flex flex-col items-start">
-            <div onClick={(e) => setSuccess('')} className="flex cursor-pointer">
-              <i className="fa-solid fa-xmark mx-2 text-blue-500 text-sm"></i>
-            </div>
-            <div className="text-blue-500 text-center bg-white w-full p-2 text-md">{success}</div>
           </div>
         )}
         <form onSubmit={uploadFile} className="upload-form px-2 py-10 border border-gray-500 rounded-lg justify-between">

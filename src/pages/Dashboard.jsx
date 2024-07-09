@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Files, FileUpload, Insights, Search, Statistics } from '../components/components';
+import { Files, FileUpload, Insights, Search, Statistics, Toaster } from '../components/components';
 
 function Dashboard() {
   const [content, setContent] = useState('statistics');
 
   return (
     <div className="flex flex-col items-center justify-around content-center min-h-screen sm:mt-10">
+      <Toaster message={'Dashboard'} iconType={'info'} duration={'1000'} />
       <div className="container mx-auto px-3 min-h-full">
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 min-h-[80dvh]">
           {/* Left Sidebar */}

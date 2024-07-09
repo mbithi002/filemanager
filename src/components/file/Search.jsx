@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Download as DownloadComponent, Share as ShareComponent } from '../../assets/google/Icons'
+import { Toaster } from '../components'
 
 function Search() {
   const [result, setResult] = useState([])
@@ -11,6 +12,7 @@ function Search() {
   }
   return (
     <div className='flex flex-col items-center w-full h-full'>
+      <Toaster message={'Search your files'} iconType={'info'} duration={'1000'} />
       <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 mx-auto">
         Search
       </p>
@@ -43,7 +45,7 @@ function Search() {
       </div>
 
       {/* handle history */}
-      Recent 
+      Recent
       <div className="flex flex-col items-center bg-white w-full py-2 text-black text-sm">
         {/* loop */}
         <div className="flex flex-row w-full my-2">

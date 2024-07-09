@@ -1,12 +1,44 @@
 import Chart from 'chart.js/auto';
 import { getRelativePosition } from 'chart.js/helpers';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import useUserFiles from '../../hooks/useUserFiles';
+import { Toaster } from '../components';
 
 function Statistics() {
+  const { userData } = useSelector((state) => state.auth)
+  const { allFiles, total } = useUserFiles(userData)
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const [toaster, setToaster] = useState(false)
+  const [moreToast, setMoreToast] = useState(false)
+  const d = new Date()
+
 
   useEffect(() => {
+
+    function loger(files) {
+      files.forEach((file) => {
+        console.log(file);
+      })
+    }
+
+    const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
+    console.log(d.getUTCDay())
+    loger(filesArray)
+
+    const handleToaster = () => {
+      setTimeout(() => {
+        setToaster(true)
+      }, 1000)
+      setToaster(false)
+      setTimeout(() => {
+        setMoreToast(true)
+      }, 3000)
+      setMoreToast(false)
+    }
+    handleToaster()
+
     const ctx = chartRef.current.getContext('2d');
 
     const data = {
@@ -49,6 +81,16 @@ function Statistics() {
 
   return (
     <div className="flex flex-col justify-between items-center">
+      {
+        toaster && (
+          <Toaster message={'View your Statistics'} iconType={'info'} duration={'2000'} />
+        )
+      }
+      {
+        moreToast && (
+          <Toaster message={'More Insights'} iconType={'info'} duration={'2000'} />
+        )
+      }
       <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300">Statistics</p>
       <div className="flex flex-col justify-center items-center h-full w-full">
         <p className="text-center">Your activity through the week.</p>
