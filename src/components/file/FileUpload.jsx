@@ -57,7 +57,8 @@ function FileUpload() {
         date: {
           year: d.getFullYear(),
           month: d.getMonth() + 1,
-          day: d.getDate(),
+          date: d.getDate(),
+          day: d.getDay() + 1,
         },
         time: {
           hours: d.getHours(),

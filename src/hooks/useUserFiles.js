@@ -5,7 +5,7 @@ import conf from "../conf/conf";
 const useUserFiles = (userData) => {
   const [filesData, setFilesData] = useState([0, 0, 0, 0, 0]);
   const [total, setTotal] = useState(0);
-
+  const [allFiles, setAllFiles] = useState()
   useEffect(() => {
     const client = new Client();
     client.setEndpoint(conf.appwriteUrl).setProject(conf.appwriteProjectId);
@@ -37,7 +37,7 @@ const useUserFiles = (userData) => {
         const filteredFiles = files.filter((file) =>
           userDocs.some((doc) => doc.fileId === file.$id)
         );
-
+        setAllFiles(filteredFiles)
         setTotal(filteredFiles.length);
 
         const categories = {
@@ -85,7 +85,7 @@ const useUserFiles = (userData) => {
     fetchFilesData();
   }, [userData]);
 
-  return { filesData, total, userData };
+  return { filesData, total, userData, allFiles };
 };
 
 export default useUserFiles;

@@ -8,8 +8,7 @@ function Insights() {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const { userData } = useSelector((state) => state.auth);
-  const { filesData, total } = useUserFiles(userData);
-
+  const { filesData, total, allFiles } = useUserFiles(userData);
   useEffect(() => {
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
