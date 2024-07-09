@@ -5,22 +5,14 @@ import conf from '../../conf/conf';
 import { FullLoader } from '../components';
 
 function FileUpload() {
-  const [error, setError] = useState('')
-  const { status, userData } = useSelector((state) => state.auth)
+  const [error, setError] = useState('');
+  const { status, userData } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null);
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
-  const d = new Date()
-
-  // const types = [
-  //   'image/png', 'image/jpeg', 'image/jpg',
-  //   'image/gif', 'image/bmp', 'image/svg+xml',
-  //   'application/pdf', 'text/plain', 'application/msword',
-  //   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  //   'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  //   'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  //   'application/zip', 'application/x-rar-compressed'
-  // ];
+  const [preview, setPreview] = useState('');
+  const [success, setSuccess] = useState('')
+  const d = new Date();
 
   const client = new Client();
   client
@@ -33,18 +25,13 @@ function FileUpload() {
   const uploadFile = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setError('')
+    setError('');
 
     try {
       if (!file) {
-        setError('Please Select a File')
+        setError('Please Select a File');
         throw new Error('No file selected');
       }
-
-      // if (!types.includes(file.type)) {
-      //   setError('Please Select a valid file type')
-      //   throw new Error('Unsupported file type');
-      // }
 
       const fileResponse = await storage.createFile(
         conf.appwriteBucketId,
@@ -52,8 +39,18 @@ function FileUpload() {
         file,
         // ['user:' + userData.$id]
       );
-      if (!fileResponse) setError('Failed to upload')
+      if (!fileResponse) {
+        setError('Failed to upload');
+        throw new Error('Failed to upload file');
+      }
       const fileId = fileResponse.$id;
+
+      const previewUrl = storage.getFilePreview(
+        conf.appwriteBucketId,
+        fileId
+      ).href;
+      setPreview(previewUrl);
+
       const metaData = JSON.stringify({
         user: userData.$id,
         description: description,
@@ -67,7 +64,7 @@ function FileUpload() {
           minutes: d.getMinutes(),
           seconds: d.getSeconds()
         }
-      })
+      });
 
       const metadataResponse = await databases.createDocument(
         conf.appwriteDatabaseId,
@@ -79,8 +76,17 @@ function FileUpload() {
         }
       );
       console.log('File and metadata uploaded successfully:', { fileResponse, metadataResponse });
-      setFile(null)
-      setDescription('')
+      setSuccess('File Upload complete')
+      const handleSuccess = () => {
+        setTimeout(() => {
+          setSuccess('')
+        }, 300);
+      }
+      handleSuccess()
+      setFile(null);
+      setDescription('');
+      setPreview()
+
     } catch (error) {
       setError(error.message);
       console.error('File upload failed:', error);
@@ -90,14 +96,23 @@ function FileUpload() {
   };
 
   const handleCancel = (e) => {
-    e.preventDefault()
-    setFile(null)
-    setDescription('')
-    return
-  }
+    e.preventDefault();
+    setFile(null);
+    setDescription('');
+    setPreview();
+    return;
+  };
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+
+    // Generate a temporary preview
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      setPreview(fileReader.result);
+    };
+    fileReader.readAsDataURL(selectedFile);
   };
 
   return (
@@ -109,16 +124,31 @@ function FileUpload() {
         </p>
         {error && (
           <div className="flex flex-col items-start">
-            <div onClick={(e) => setError('')} className="flex"><i class="fa-solid fa-xmark mx-2 text-red-500 text-sm"></i></div>
+            <div onClick={(e) => setError('')} className="flex cursor-pointer">
+              <i className="fa-solid fa-xmark mx-2 text-red-500 text-sm"></i>
+            </div>
             <div className="text-red-500 text-center bg-white w-full p-2 text-md">{error}</div>
+          </div>
+        )}
+        {success && (
+          <div className="flex flex-col items-start">
+            <div onClick={(e) => setSuccess('')} className="flex cursor-pointer">
+              <i className="fa-solid fa-xmark mx-2 text-blue-500 text-sm"></i>
+            </div>
+            <div className="text-blue-500 text-center bg-white w-full p-2 text-md">{success}</div>
           </div>
         )}
         <form onSubmit={uploadFile} className="upload-form px-2 py-10 border border-gray-500 rounded-lg justify-between">
           <div className='flex flex-col gap-3 mb-2'>
-            <label htmlFor="file" >File</label>
-            <input type="file" id="file" onChange={handleFileChange} required className='p-2 text-white bg-teal-400 text-sm rounded-md cursor-pointer hover:bg-teal-500 active:bg-teal-300 transition-all duration-200' />
+            <label htmlFor="file">File</label>
+            <input
+              type="file"
+              id="file"
+              onChange={handleFileChange}
+              required
+              className='p-2 text-white bg-teal-400 text-sm rounded-md cursor-pointer hover:bg-teal-500 active:bg-teal-300 transition-all duration-200'
+            />
           </div>
-          {/* <hr className='border border-t-gray-800 m-2' /> */}
           <div>
             <label htmlFor="description" className="m-2 p-1">Description:</label>
             <input
@@ -130,8 +160,14 @@ function FileUpload() {
               required
             />
           </div>
+          {preview && (
+            <div className="w-[12rem] h-[12rem] self-center p-2 mb-2">
+              <p className="text-blue-500">Preview</p>
+              <img src={preview} alt="File Preview" className="mx-auto" />
+            </div>
+          )}
           <button type="submit" disabled={loading} className='py-1 rounded-[2rem] mx-2 my-1 bg-green-500 active:bg-green-500 transition-all duration-200 hover:bg-green-400 text-white px-4'>
-            Upload<i class="fa-solid fa-upload text-white mx-2 text-sm"></i>
+            Upload<i className="fa-solid fa-upload text-white mx-2 text-sm"></i>
           </button>
         </form>
         <button
