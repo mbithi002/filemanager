@@ -15,6 +15,7 @@ const Header = () => {
   const handleLogout = () => {
     authService.logout().then(() => {
       dispatch(logout())
+    canvas && setCanvas(false)
     }).finally(() => navigate('/'))
   };
 
@@ -61,28 +62,58 @@ const Header = () => {
       </header>
       {/* Mobile Header */}
       <header className="sm:hidden bg-blue-500 text-white shadow-md mb-30 fixed top-0 w-full z-50 flex flex-row justify-between items-center h-[4rem] px-2">
-        <div 
-          onClick={() => setCanvas(true)}
+        <div
           className=""
         >
           <Link to={'/'}>
             <h1>File Manager<i class="fa-regular fa-file mx-2"></i></h1>
           </Link>
         </div>
-        {
-          canvas && (
-            <div className="fixed z-30 min-w-[100vw] min-h-screen bg-gray-200 p-2 flex flex-col">
-              <div className="text-3xl text-start text-gray-700 font-semibold">
-                Home
-              </div>
-              <button></button>
-            </div>
-          )
-        }
-        <div className="cursor-pointer">
+        <div
+          onClick={() => setCanvas(true)}
+          className="cursor-pointer">
           <i class="fa-solid fa-ellipsis-vertical mx-3"></i>
         </div>
       </header>
+      {
+        canvas && (
+          <div className="canvas fixed z-50 min-w-[80vw] h-[100dvh] bg-gray-800 p-2 flex flex-col">
+            <div className="relative flex flex-col text-start text-gray-200">
+              <div onClick={() => setCanvas(false)} className="self-end cursor-pointer">
+                <i className='fa-regular fa-circle-xmark self-end text-2xl m-2'></i>
+              </div>
+              <div onClick={() => setCanvas(false)} className="ml-2">
+                <Link to={'/'}>
+                  <p className='text-2xl font-semibold'>Home</p>
+                </Link>
+              </div>
+              <div onClick={() => setCanvas(false)} className="">
+                <Link to={'/dashboard'}>
+                  <p className="rounded-lg py-2 mx-2 my-4 px-4 bg-gray-200 text-gray-700">
+                    Dashboard
+                  </p>
+                </Link>
+              </div>
+              {
+                status ? (
+                  <div className="flex flex-col my-2 justify-between">
+                    <div className="">
+                      <i className='fa-solid fa-circle-user text-3xl mx-2 inline'></i>
+                      <span className="block mx-1 text-lg border border-gray-100 m-2 rounded-lg p-2 font-semibold">{userData.name}</span>
+                      <span className="block mx-1 text-lg border border-gray-100 m-2 rounded-lg p-2">{userData.email}</span>
+                    </div>
+                    <div className="flex w-full">
+                      <button onClick={() => handleLogout()} className="norder-none bg-gray-200 rounded-lg text-gray-700 text-xl font-semibold bottom-0 w-full self-center p-2 -mb-[90dvh] my-2">Logout</button>
+                    </div>
+                  </div>
+                )
+                  :
+                  null
+              }
+            </div>
+          </div>
+        )
+      }
     </>
   );
 };

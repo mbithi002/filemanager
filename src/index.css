@@ -344,3 +344,19 @@
     transform: scale3d(1, 1, 1);
   }
 }
+
+
+.canvas {
+  animation: canvas 500ms ease-in-out;
+}
+
+@keyframes canvas {
+  0% {
+    transform: translateX(-90vw);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
