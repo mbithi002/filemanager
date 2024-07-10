@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import service from '../../appwrite/config';
 import { Download as DownloadComponent, Share as ShareComponent } from '../../assets/google/Icons';
 import useUserFiles from '../../hooks/useUserFiles';
 import { CustomSpinner, Toaster } from '../components';
+import { downloadFile, shareFile } from './fileActions';
 
 function Search() {
   const [result, setResult] = useState([]);
@@ -20,6 +22,25 @@ function Search() {
       setRecents(Array.isArray(allFiles) ? allFiles.slice(0, 6) : Object.values(allFiles).slice(0, 6));
     }
   }, [allFiles]);
+
+  const deleteFile = async (fileId, fileName) => {
+    try {
+      const res = await service.fileDelete(fileId);
+
+      if (!res) {
+        alert("Failed to delete file");
+        return;
+      } else {
+        setResult(result.filter(file => file.$id !== fileId));
+        alert(`${fileName} 1 file deleted`);
+      }
+
+    } catch (error) {
+      alert(error.message);
+      throw new error();
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,6 +70,15 @@ function Search() {
 
   const RenderResult = ({ result }) => (
     <div className="flex flex-col items-center w-full py-2 px-3 text-sm my-2">
+      {result.length > 0 && (
+        <div
+          onClick={() => setResult([])}
+          className="flex flex-col self-start cursor-pointer"
+        >
+          <i className="fa-solid fa-circle-xmark text-xl text-red-500"></i>
+        </div>
+      )}
+
       {
         result.length > 0 ?
           result.map((file) => (
@@ -60,8 +90,27 @@ function Search() {
               <div className="">{file.name}</div>
               <div className="">{new Date(file.$createdAt).getDate()}/{new Date(file.$createdAt).getMonth() + 1}/{new Date(file.$createdAt).getFullYear()}</div>
               <div className="flex flex-row justify-between items-center">
-                <ShareComponent w='24px' h='24px' c='#fff' />
-                <DownloadComponent w='24px' h='24px' c='#fff' />
+                <div
+                  className="cursor-pointer mx-1"
+                  key={file.$id}
+                  onClick={() => shareFile(file.$id)}
+                >
+                  <ShareComponent w='24px' h='24px' c='#fff' />
+                </div>
+                <div
+                  className="cursor-pointer mx-1"
+                  key={file.$id}
+                  onClick={() => downloadFile(file.$id)}
+                >
+                  <DownloadComponent w='24px' h='24px' c='#fff' />
+                </div>
+                <div
+                  key={file.$id}
+                  onClick={() => deleteFile(file.$id, file.name)}
+                  className="cursor-pointer mx-1"
+                >
+                  <i class="fa-solid fa-trash mx-2 text-xl"></i>
+                </div>
               </div>
             </div>
           )) : <p>No results found</p>

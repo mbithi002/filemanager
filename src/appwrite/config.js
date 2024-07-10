@@ -75,6 +75,23 @@ export class Service {
       return false;
     }
   }
+
+  async fileDelete (fileId) {
+    try {
+      const response = await this.bucket.deleteFile(
+        conf.appwriteBucketId,
+        fileId
+      )
+
+      if (!response) {
+        console.log("Failed to delete file");
+      }
+      return response
+    } catch (error) {
+      console.log("app-write Service :: getFileDownload() ::>>> ", error);
+      return false;
+    }
+  }
 }
 
 const service = new Service();

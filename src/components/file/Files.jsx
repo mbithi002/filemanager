@@ -9,52 +9,9 @@ function Files() {
   const { userData } = useSelector((state) => state.auth);
   const { allFiles } = useUserFiles(userData);
   const [isMounted, setIsMounted] = useState(false);
-  const [downloading, setDownloading] = useState(false)
-  const [error, setError] = useState('')
-
-  const downloadFile = async (fileId) => {
-    setDownloading(true)
-    try {
-      const url = await service.getFileDownload(fileId);
-
-      if (!url) {
-        setDownloading(false)
-        setError('Download failed')
-        return;
-      }
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = '';
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-
-      setDownloading(false)
-    } catch (error) {
-      console.log("Files :: downloadFile() :: ", error);
-      setError(error.message);
-    }
-  };
-  const shareFile = async (fileId) => {
-    try {
-      const res = await service.getFileDownload(fileId);
-      if (!res) {
-        setError('Failed to copy Link');
-        return;
-      }
-      const url = res.toString();
-      await window.navigator.clipboard.writeText(url);
-      alert("Link Copied", url);
-    } catch (error) {
-      setError(error.message);
-      alert(error.message);
-      throw error;
-    }
-  };
-
+  const [downloading, setDownloading] = useState(false);
+  const [error, setError] = useState('');
+  const [filesArray, setFilesArray] = useState([]);
 
   const renderFileCard = (file, IconComponent, borderColor, textColor) => (
     <div className="container file-card flex flex-col max-w-[12rem] min-w-[12rem] min-h-[12rem] m-2 rounded-md border p-2 bg-gray-100" style={{ borderColor }}>
@@ -75,18 +32,23 @@ function Files() {
         <div className="rounded-[50%] hover:border-none cursor-pointer hover:shadow-xl hover:bg-gray-200 transition-all duration-200 active:bg-white bg-gray-100 border border-gray-300 p-2 m-2 mx-auto">
           <div
             className=""
-            onClick={() => downloadFile(file.$id)}
+            onClick={() => handleDownload(file.$id)}
             key={file.$id}
           >
             <DownloadComponent w='1rem' h='1rem' c='#232323' />
           </div>
         </div>
       </div>
-      {/* <p className="text-center" style={{ color: textColor }}>{new Date(file.$createdAt).toLocaleDateString()}</p> */}
-      <div className="w-full flex flex-row justify-around items-center">
+      <div className="w-full flex flex-row justify-evenly items-center">
         <p className="text-center text-sm" style={{ color: textColor }}>
           <span className="text-black text-sm">Date: </span>{new Date(file.$createdAt).getDate()}/{new Date(file.$createdAt).getMonth() + 1}/{new Date(file.$createdAt).getFullYear()}
         </p>
+        <div
+          onClick={() => deleteFile(file.$id, file.name)}
+          className="cursor-pointer"
+        >
+          <i className='fa-solid fa-trash text-md text-red-400'></i>
+        </div>
       </div>
     </div>
   );
@@ -118,16 +80,36 @@ function Files() {
     return categories;
   };
 
-  // Ensure allFiles is defined and is an array
-  const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
+  const deleteFile = async (fileId, fileName) => {
+    try {
+      const res = await service.fileDelete(fileId);
+
+      if (!res) {
+        setError("Failed to delete file");
+        return;
+      }
+
+      setFilesArray(filesArray.filter(file => file.$id !== fileId));
+      alert(`${fileName} deleted successfully`);
+    } catch (error) {
+      setError(error.message);
+      throw new Error(error.message);
+    }
+  };
 
   useEffect(() => {
-    if (allFiles) setIsMounted(true)
-  }, [allFiles])
+    if (allFiles) {
+      setFilesArray(Array.isArray(allFiles) ? allFiles : Object.values(allFiles));
+      setIsMounted(true);
+    }
+  }, [allFiles]);
+
   const categorizedFiles = categorizeFiles(filesArray);
-  if (!isMounted) return (
-    <CustomSpinner />
-  )
+
+  if (!isMounted) {
+    return <CustomSpinner />;
+  }
+
   return (
     <div className="container p-2 bg-gray-100 text-[#232323] h-full overflow-y-scroll scrollbar-y max-h-[75dvh]">
       <Toaster message={'View your Files'} iconType={'info'} duration={'2000'} />
@@ -135,7 +117,7 @@ function Files() {
         <p className="text-center my-5 py-2 px-3 self-center rounded-md shadow-lg border border-gray-300 w-1/4">My Files</p>
         {error && (
           <div className="flex flex-col items-start fixed z-20 sm:w-[45vw] w-[80vw] sm:p-0 px-2 mx-auto mt-10">
-            <div onClick={(e) => setError('')} className="flex cursor-pointer">
+            <div onClick={() => setError('')} className="flex cursor-pointer">
               <i className="fa-solid fa-xmark mx-2 text-red-500 text-sm"></i>
             </div>
             <div className="text-red-500 text-center bg-white w-full p-2 text-md">{error}</div>
@@ -143,7 +125,7 @@ function Files() {
         )}
         {downloading && (
           <div className="flex flex-col items-start fixed z-20 sm:w-[45vw] w-[80vw] sm:p-0 px-2 mx-auto mt-10">
-            <div onClick={(e) => setDownloading(false)} className="flex cursor-pointer">
+            <div onClick={() => setDownloading(false)} className="flex cursor-pointer">
               <i className="fa-solid fa-xmark mx-2 text-blue-500 text-sm"></i>
             </div>
             <div className="text-blue-500 text-center flex flex-row mx-auto bg-white w-full p-2 text-md items-center">

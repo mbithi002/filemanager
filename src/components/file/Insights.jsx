@@ -42,7 +42,6 @@ function Insights() {
     });
   }, [filesData]);
 
-
   return (
     <div className="container flex flex-col justify-around items-center h-full w-full">
       <p className="my-1 p-2 self-start rounded-md shadow-lg">Total files :<span className="border m-2 p-1 rounded-md shadow-inner border-gray-700">{total}</span></p>
