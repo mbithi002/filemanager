@@ -71,7 +71,7 @@ function Files() {
     <CustomSpinner />
   )
   return (
-    <div className="container p-2 bg-white text-[#232323] h-full overflow-y-scroll scrollbar-y max-h-[75dvh]">
+    <div className="container p-2 bg-gray-100 text-[#232323] h-full overflow-y-scroll scrollbar-y max-h-[75dvh]">
       <Toaster message={'View your Files'} iconType={'info'} duration={'2000'} />
       <div className="flex flex-col ">
         <p className="text-center my-5 py-2 px-3 self-center rounded-md shadow-lg border border-gray-300 w-1/4">My Files</p>

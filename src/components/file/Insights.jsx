@@ -45,7 +45,7 @@ function Insights() {
 
   return (
     <div className="container flex flex-col justify-around items-center h-full w-full">
-      <p className="my-1 p-2 self-start rounded-md shadow-lg">Total files :<span className="border m-2 p-1 rounded-md shadow-inner shadow-lg border-gray-700">{total}</span></p>
+      <p className="my-1 p-2 self-start rounded-md shadow-lg">Total files :<span className="border m-2 p-1 rounded-md shadow-inner border-gray-700">{total}</span></p>
       <div className="flex flex-col justify-around items-center h-full w-full p-3 mt-2 rounded-md shadow-lg">
         <canvas ref={chartRef}></canvas>
       </div>

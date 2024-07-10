@@ -17,7 +17,7 @@ function Search() {
     if (allFiles) {
       setIsMounted(true);
       // Optionally, you can set initial recents here if needed
-      setRecents(Array.isArray(allFiles) ? allFiles.slice(0, 5) : Object.values(allFiles).slice(0, 5));
+      setRecents(Array.isArray(allFiles) ? allFiles.slice(0, 6) : Object.values(allFiles).slice(0, 6));
     }
   }, [allFiles]);
 
@@ -45,7 +45,6 @@ function Search() {
       console.log(file.$id);
     })
     setResult(resArray)
-    // setSearch('');
   };
 
   const RenderResult = ({ result }) => (
