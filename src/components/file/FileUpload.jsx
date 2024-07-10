@@ -115,8 +115,8 @@ function FileUpload() {
       {loading ? <FullLoader message='Uploading file...' /> : null}
       <Toaster message={toaster.message} iconType={toaster.type} duration={toaster.duration} />
 
-      <div className="flex flex-col justify-around">
-        <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 self-center">
+      <div className="flex flex-col justify-around sm:-mt-0 -mt-[7rem] sm:pt-0 pt-5">
+        <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 sm:w-1/4 w-1/2 self-center">
           Upload file
         </p>
         {error && (

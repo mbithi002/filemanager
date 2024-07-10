@@ -123,7 +123,7 @@ function Search() {
     );
   }
   return (
-    <div className='flex flex-col items-center w-full h-full'>
+    <div className='flex flex-col items-center w-full h-full sm:-mt-0 -mt-[7rem] sm:pt-0 pt-5'>
       <Toaster message={toaster.message} iconType={toaster.type} duration={toaster.duration} />
       <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 mx-auto">
         Search

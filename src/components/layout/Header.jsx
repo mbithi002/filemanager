@@ -1,5 +1,5 @@
 // src/components/common/Header.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../../appwrite/auth';
@@ -10,6 +10,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const { status, userData } = useSelector((state) => state.auth);
   const navigate = useNavigate()
+  const [canvas, setCanvas] = useState(false)
 
   const handleLogout = () => {
     authService.logout().then(() => {
@@ -60,13 +61,26 @@ const Header = () => {
       </header>
       {/* Mobile Header */}
       <header className="sm:hidden bg-blue-500 text-white shadow-md mb-30 fixed top-0 w-full z-50 flex flex-row justify-between items-center h-[4rem] px-2">
-        <div className="">
-          <h1>File Manager<i class="fa-regular fa-file mx-2"></i></h1>
-        </div>
-        <div className="">
-          <Link>
-            <i class="fa-solid fa-ellipsis-vertical mx-3"></i>
+        <div 
+          onClick={() => setCanvas(true)}
+          className=""
+        >
+          <Link to={'/'}>
+            <h1>File Manager<i class="fa-regular fa-file mx-2"></i></h1>
           </Link>
+        </div>
+        {
+          canvas && (
+            <div className="fixed z-30 min-w-[100vw] min-h-screen bg-gray-200 p-2 flex flex-col">
+              <div className="text-3xl text-start text-gray-700 font-semibold">
+                Home
+              </div>
+              <button></button>
+            </div>
+          )
+        }
+        <div className="cursor-pointer">
+          <i class="fa-solid fa-ellipsis-vertical mx-3"></i>
         </div>
       </header>
     </>

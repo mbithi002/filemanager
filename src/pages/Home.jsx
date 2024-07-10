@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { HeroFind, HeroOrganise, HeroShare, HeroTwo, HeroUpload } from '../assets/assets';
 import { Toaster } from '../components/components';
+import useIntersectionObserver from '../hooks/useIntersectionObserver';
 
 function Home() {
+  const [isVisible, setVisible] = useState(false)
+
+  const elementRef = useIntersectionObserver(() => {
+    setVisible(true)
+  }, { threshold: 0 })
   return (
     <div className="text-center min-h-screen w-full p-10  bg-gray-200">
 
@@ -11,14 +17,14 @@ function Home() {
         <div className="grid sm:grid-cols-2 min-h-[70dvh] p-3 gap-5">
           <div className="flex flex-col justify-between">
             <p className="text-left text-gray-700 my-auto">
-              <span className='font-bold text-2xl mb-3 text-blue-500 block'>Welcome to Your File Management Hub</span>
+              <span className='font-bold text-2xl mb-3 text-blue-500 block text-focus-in'>Welcome to Your File Management Hub</span>
               <span className="text-sm text-black">
                 Discover a <strong>seamless</strong> way to <strong>store</strong>, <strong>manage</strong>, and <strong>share</strong> files of any format with ease. Whether you're organizing personal documents, sharing creative projects, or collaborating with teams, our app simplifies your workflow.
               </span>
             </p>
-            <button className='p-2 m-2 rounded-[3rem] sm:-mt-10 sm:mb-10 bg-green-400 w-[10rem]'>Get Started</button>
+            <button className='p-2 m-2 rounded-[3rem] sm:-mt-10 sm:mb-10 bg-green-400 w-[10rem] bounce-top bounce-top'>Get Started</button>
           </div>
-          <div className="flex justify-center items-center content-center w-full p-3 contain-content z-10">
+          <div className="flex justify-center items-center content-center w-full p-3 contain-content z-10 slide-top sm:-mb-[160px] sm:mt-0 mt-[100px]">
             <HeroTwo w='full' h='full' />
           </div>
         </div>
@@ -26,12 +32,12 @@ function Home() {
       <div className="container flex flex-col items-center mt-2 sm:mt-0 border border-b-gray-700 sm:border-none">
         <p className="text-center font-semibold text-2xl text-gray-700">Explore these features</p>
         <div className="grid sm:grid-cols-2 p-3 gap-5 items-center py-10 sm:max-h-[50dvh] sm:flex-col-reverse">
-          <div className="flex items-center justify-center h-[50dvh]">
+          <div className={`flex items-center justify-center h-[50dvh] ${isVisible ? 'fade-in' : ''}`}>
             <HeroUpload w='full' h='full' />
           </div>
           <div className="text-gray-700 flex flex-col text-start items-start justify-center">
             <p className="my-auto">
-              <span className="text-xl text-green-500 mb-5 block underline font-bold">Upload Files:<i class="fa-solid fa-upload mx-2 text-gray-700"></i></span>
+              <span ref={elementRef} className={`text-xl text-green-500 mb-5 block underline font-bold ${isVisible ? 'text-focus-in' : ''} `}>Upload Files:<i class="fa-solid fa-upload mx-2 text-gray-700"></i></span>
               Store documents, images, videos, and more securely in our Appwrite-powered database.
             </p>
           </div>
@@ -45,7 +51,9 @@ function Home() {
               Organize your files into folders, tag them for quick retrieval, and keep everything organized.
             </p>
           </div>
-          <div className="flex items-center justify-center h-[50dvh]">
+          <div
+            ref={elementRef}
+            className={`flex items-center justify-center h-[50dvh] ${isVisible ? 'tilt-in-fwd-tr' : ''}`}>
             <HeroOrganise w='full' h='full' />
           </div>
         </div>
@@ -81,6 +89,34 @@ function Home() {
           Ready to streamline your file management? Dive in and experience the future of file organization and sharing.
         </p>
         <button className="py-2 px-5 cursor-pointer rounded-[3rem] bg-green-400 text-white text-semi-bold">Start Now</button>
+      </div>
+      <div className="container">
+        <div className={`grid sm:grid-cols-4 gap-2 py-2 h-[120px]`}>
+          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
+            <div className="flex flex-col items-center text-green-400">
+              <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
+              <p className="text-center text-2xl">Upload</p>
+            </div>
+          </div>
+          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
+            <div className="flex flex-col items-center text-blue-400">
+              <i class="fa-solid fa-pen-nib text-3xl"></i>
+              <p className="text-center text-2xl">Update</p>
+            </div>
+          </div>
+          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
+            <div className="flex flex-col items-center text-teal-700">
+              <i class="fa-solid fa-magnifying-glass text-3xl rotate-90"></i>
+              <p className="text-center text-2xl">Retrieve</p>
+            </div>
+          </div>
+          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
+            <div className="flex flex-col items-center text-red-700">
+              <i class="fa-solid fa-trash text-3xl"></i>
+              <p className="text-center text-2xl">Delete</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

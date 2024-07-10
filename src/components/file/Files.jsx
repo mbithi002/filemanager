@@ -111,10 +111,10 @@ function Files() {
   }
 
   return (
-    <div className="container p-2 bg-gray-100 text-[#232323] h-full overflow-y-scroll scrollbar-y max-h-[75dvh]">
+    <div className="container p-2 bg-gray-100 text-[#232323] h-full overflow-y-scroll scrollbar-y max-h-[75dvh] sm:-mt-0 -mt-[7rem]">
       <Toaster message={'View your Files'} iconType={'info'} duration={'2000'} />
       <div className="flex flex-col ">
-        <p className="text-center my-5 py-2 px-3 self-center rounded-md shadow-lg border border-gray-300 w-1/4">My Files</p>
+        <p className="text-center my-5 py-2 px-3 self-center rounded-md shadow-lg border border-gray-300 sm:w-1/4 w-1/2">My Files</p>
         {error && (
           <div className="flex flex-col items-start fixed z-20 sm:w-[45vw] w-[80vw] sm:p-0 px-2 mx-auto mt-10">
             <div onClick={() => setError('')} className="flex cursor-pointer">
