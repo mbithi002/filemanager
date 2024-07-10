@@ -85,7 +85,6 @@ function Search() {
           <input
             type="text"
             placeholder='Search by name...'
-            type="text"
             name="query"
             id="query"
             value={search}
