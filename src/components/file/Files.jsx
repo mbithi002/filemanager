@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import service from '../../appwrite/config';
 import { Audio as AudioComponent, Doc as DocComponent, Download as DownloadComponent, Images as ImageComponent, Others as OthersComponent, Share as ShareComponent, Video as VideoComponent } from '../../assets/google/Icons';
 import useUserFiles from '../../hooks/useUserFiles';
 import { CustomSpinner, Toaster } from '../components';
@@ -8,6 +9,51 @@ function Files() {
   const { userData } = useSelector((state) => state.auth);
   const { allFiles } = useUserFiles(userData);
   const [isMounted, setIsMounted] = useState(false);
+  const [downloading, setDownloading] = useState(false)
+  const [error, setError] = useState('')
+
+  const downloadFile = async (fileId) => {
+    setDownloading(true)
+    try {
+      const url = await service.getFileDownload(fileId);
+
+      if (!url) {
+        setDownloading(false)
+        setError('Download failed')
+        return;
+      }
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = '';
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      setDownloading(false)
+    } catch (error) {
+      console.log("Files :: downloadFile() :: ", error);
+      setError(error.message);
+    }
+  };
+  const shareFile = async (fileId) => {
+    try {
+      const res = await service.getFileDownload(fileId);
+      if (!res) {
+        setError('Failed to copy Link');
+        return;
+      }
+      const url = res.toString();
+      await window.navigator.clipboard.writeText(url);
+      alert("Link Copied", url);
+    } catch (error) {
+      setError(error.message);
+      alert(error.message);
+      throw error;
+    }
+  };
 
 
   const renderFileCard = (file, IconComponent, borderColor, textColor) => (
@@ -18,10 +64,22 @@ function Files() {
       </div>
       <div className="flex flex-row items-center justify-around rounded-md w-1/2 mx-auto">
         <div className="rounded-[50%] hover:border-none cursor-pointer hover:shadow-xl hover:bg-gray-200 transition-all duration-200 active:bg-white bg-gray-100 border border-gray-300 p-2 m-2 mx-auto">
-          <ShareComponent w='1rem' h='1rem' c='#232323' />
+          <div
+            className=""
+            onClick={() => shareFile(file.$id)}
+            key={file.$id}
+          >
+            <ShareComponent w='1rem' h='1rem' c='#232323' />
+          </div>
         </div>
         <div className="rounded-[50%] hover:border-none cursor-pointer hover:shadow-xl hover:bg-gray-200 transition-all duration-200 active:bg-white bg-gray-100 border border-gray-300 p-2 m-2 mx-auto">
-          <DownloadComponent w='1rem' h='1rem' c='#232323' />
+          <div
+            className=""
+            onClick={() => downloadFile(file.$id)}
+            key={file.$id}
+          >
+            <DownloadComponent w='1rem' h='1rem' c='#232323' />
+          </div>
         </div>
       </div>
       {/* <p className="text-center" style={{ color: textColor }}>{new Date(file.$createdAt).toLocaleDateString()}</p> */}
@@ -63,7 +121,7 @@ function Files() {
   // Ensure allFiles is defined and is an array
   const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
 
-  useEffect (() => {
+  useEffect(() => {
     if (allFiles) setIsMounted(true)
   }, [allFiles])
   const categorizedFiles = categorizeFiles(filesArray);
@@ -75,7 +133,25 @@ function Files() {
       <Toaster message={'View your Files'} iconType={'info'} duration={'2000'} />
       <div className="flex flex-col ">
         <p className="text-center my-5 py-2 px-3 self-center rounded-md shadow-lg border border-gray-300 w-1/4">My Files</p>
-
+        {error && (
+          <div className="flex flex-col items-start fixed z-20 sm:w-[45vw] w-[80vw] sm:p-0 px-2 mx-auto mt-10">
+            <div onClick={(e) => setError('')} className="flex cursor-pointer">
+              <i className="fa-solid fa-xmark mx-2 text-red-500 text-sm"></i>
+            </div>
+            <div className="text-red-500 text-center bg-white w-full p-2 text-md">{error}</div>
+          </div>
+        )}
+        {downloading && (
+          <div className="flex flex-col items-start fixed z-20 sm:w-[45vw] w-[80vw] sm:p-0 px-2 mx-auto mt-10">
+            <div onClick={(e) => setDownloading(false)} className="flex cursor-pointer">
+              <i className="fa-solid fa-xmark mx-2 text-blue-500 text-sm"></i>
+            </div>
+            <div className="text-blue-500 text-center flex flex-row mx-auto bg-white w-full p-2 text-md items-center">
+              <div className="ml-2 mr-5 w-[1.5rem] h-[1.5rem] rounded-[50%] border-blue-500 border-[.2rem] border-t-[transparent] animate-spin"></div>
+              <p className=''>Downloading...</p>
+            </div>
+          </div>
+        )}
         <p className="text-start mx-3 mt-2">Images: <span className="text-sm">{categorizedFiles.images.length}</span></p>
         <div className="flex flex-row min-h-[13rem] shadow-xl border overflow-x-scroll scrollbar-thin py-2 my-2">
           {categorizedFiles.images.length > 0 ? categorizedFiles.images.map((file) => renderFileCard(file, ImageComponent, '#36A2EB', '#36A2EB')) : <p className="mx-3">No image files</p>}

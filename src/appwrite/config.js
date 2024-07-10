@@ -57,6 +57,24 @@ export class Service {
       return false;
     }
   }
+
+  async getFileDownload(fileId) {
+    try {
+      const result = await this.bucket.getFileDownload(
+        conf.appwriteBucketId,
+        fileId
+      );
+      if (result) {
+        return result.href; // Return the URL directly
+      } else {
+        console.log("Failed to download");
+        return false;
+      }
+    } catch (error) {
+      console.log("app-write Service :: getFileDownload() ::>>> ", error);
+      return false;
+    }
+  }
 }
 
 const service = new Service();
