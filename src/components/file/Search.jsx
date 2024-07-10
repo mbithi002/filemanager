@@ -37,25 +37,36 @@ function Search() {
           arr.push(file);
         }
       })
-      setResult(arr);
+      return arr
     }
-    filerFiles()
+    const res = filerFiles()
+    const resArray = res ? (Array.isArray(res) ? res : Object.values(res)) : [];
+    resArray.forEach((file) => {
+      console.log(file.$id);
+    })
+    setResult(resArray)
     // setSearch('');
   };
 
-  const RenderResult = (result) => (
+  const RenderResult = ({ result }) => (
     <div className="flex flex-col items-center w-full py-2 px-3 text-sm my-2">
-      {result.length > 0 ? result.map((file) => (
-        <div key={file.id} className="flex flex-row justify-between w-full my-3 px-2 py-2 rounded-sm bg-teal-500 text-white ">
-          <div className=""><i className="fa-solid fa-file"></i></div>
-          <div className="">{file.name}</div>
-          <div className="">{file.date}</div>
-          <div className="flex flex-row justify-between items-center">
-            <ShareComponent w='24px' h='24px' c='#fff' />
-            <DownloadComponent w='24px' h='24px' c='#fff' />
-          </div>
-        </div>
-      )) : <p>No results found</p>}
+      {
+        result.length > 0 ?
+          result.map((file) => (
+            <div
+              key={file.$id}
+              className="flex flex-row justify-between w-full mb-1 px-2 py-2 rounded-sm bg-teal-500 text-white"
+            >
+              <div className=""><i className="fa-solid fa-file"></i></div>
+              <div className="">{file.name}</div>
+              <div className="">{new Date(file.$createdAt).getDate()}/{new Date(file.$createdAt).getMonth() + 1}/{new Date(file.$createdAt).getFullYear()}</div>
+              <div className="flex flex-row justify-between items-center">
+                <ShareComponent w='24px' h='24px' c='#fff' />
+                <DownloadComponent w='24px' h='24px' c='#fff' />
+              </div>
+            </div>
+          )) : <p>No results found</p>
+      }
     </div>
   );
   if (!isMounted) {
@@ -73,6 +84,8 @@ function Search() {
         <div className="flex flex-row items-center justify-around">
           <input
             type="text"
+            placeholder='Search by name...'
+            type="text"
             name="query"
             id="query"
             value={search}
@@ -84,7 +97,7 @@ function Search() {
           </button>
         </div>
       </form>
-      <RenderResult />
+      <RenderResult result={result} />
       {/* handle history */}
       <div className="flex flex-col items-center bg-white w-full py-2 text-black text-sm">
         <p>Recent</p>
