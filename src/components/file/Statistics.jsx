@@ -115,14 +115,14 @@ function Statistics() {
   }
 
   return (
-    <div className="flex flex-col justify-between items-center">
+    <div className="flex flex-col justify-between items-cente sm:-mt-0 -mt-[6rem] r">
       {toaster && (
         <Toaster message={'View your Statistics'} iconType={'info'} duration={'2000'} />
       )}
       {moreToast && (
         <Toaster message={'More Insights'} iconType={'info'} duration={'2000'} />
       )}
-      <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300">Statistics</p>
+      <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 sm:w-1/4 w-1/2 mx-auto">Statistics</p>
       <div className="flex flex-col justify-center items-center h-full w-full">
         <p className="text-center">Your activity through the week.</p>
         <canvas ref={chartRef} className="m-2 border border-gray-300 p-2 rounded-md shadow-lg"></canvas>

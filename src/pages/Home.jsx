@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { HeroFind, HeroOrganise, HeroShare, HeroTwo, HeroUpload } from '../assets/assets';
 import { Toaster } from '../components/components';
 import useIntersectionObserver from '../hooks/useIntersectionObserver';
@@ -8,10 +9,9 @@ function Home() {
 
   const elementRef = useIntersectionObserver(() => {
     setVisible(true)
-  }, { threshold: 0 })
+  }, { threshold: 0.1 })
   return (
-    <div className="text-center min-h-screen w-full p-10  bg-gray-200">
-
+    <div className="text-center min-h-screen w-full py-10 px-5  bg-gray-200">
       <Toaster message={'Home'} iconType={'info'} duration={'1000'} />
       <div className="container my-10">
         <div className="grid sm:grid-cols-2 min-h-[70dvh] p-3 gap-5">
@@ -22,7 +22,11 @@ function Home() {
                 Discover a <strong>seamless</strong> way to <strong>store</strong>, <strong>manage</strong>, and <strong>share</strong> files of any format with ease. Whether you're organizing personal documents, sharing creative projects, or collaborating with teams, our app simplifies your workflow.
               </span>
             </p>
-            <button className='p-2 m-2 rounded-[3rem] sm:-mt-10 sm:mb-10 bg-green-400 w-[10rem] bounce-top bounce-top'>Get Started</button>
+            <div className="self-start sm:-mt-10 sm:mb-10">
+              <Link to={'/dashboard'}>
+                <button className='p-2 m-2 rounded-[3rem] bg-green-400 w-[10rem] bounce-top bounce-top'>Get Started</button>
+              </Link>
+            </div>
           </div>
           <div className="flex justify-center items-center content-center w-full p-3 contain-content z-10 slide-top sm:-mb-[160px] sm:mt-0 mt-[100px]">
             <HeroTwo w='full' h='full' />
@@ -88,31 +92,32 @@ function Home() {
         <p className="text-center font-semibold text-green-500 text-xl">
           Ready to streamline your file management? Dive in and experience the future of file organization and sharing.
         </p>
-        <button className="py-2 px-5 cursor-pointer rounded-[3rem] bg-green-400 text-white text-semi-bold">Start Now</button>
+        <Link to={'/dashboard'}>
+          <button className="py-2 px-5 cursor-pointer rounded-[3rem] bg-green-400 text-white text-semi-bold">Start Now</button></Link>
       </div>
-      <div className="container">
-        <div className={`grid sm:grid-cols-4 gap-2 py-2 h-[120px]`}>
-          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
-            <div className="flex flex-col items-center text-green-400">
-              <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
+      <div className="container sm:h-fit h-[70dvh] sm:bg-gray-200 bg-teal-200 sm:py-0 py-3 sm:my-0 my-3">
+        <div className="sm:grid flex flex-col items-center justify-evenly sm:grid-cols-4 py-2 h-[120px] sm:bg-gray-200 bg-teal-200 gap-2">
+          <div className="sm:col-span-1 w-full h-full content-center sm:mb-0 mb-3 flex flex-col items-center">
+            <div className="heartbeat flex flex-col items-center text-green-400 hover:border hover:border-green-400 hover:rounded-[50%] transition-all duration-100 p-5 cursor-pointer">
+              <i className="fa-solid fa-cloud-arrow-up text-3xl"></i>
               <p className="text-center text-2xl">Upload</p>
             </div>
           </div>
-          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
-            <div className="flex flex-col items-center text-blue-400">
-              <i class="fa-solid fa-pen-nib text-3xl"></i>
+          <div className="sm:col-span-1 w-full h-full content-center sm:mb-0 mb-3 flex flex-col items-center">
+            <div className="heartbeat flex flex-col items-center text-blue-400 hover:border hover:border-blue-400 hover:rounded-[50%] transition-all duration-100 p-5 cursor-pointer">
+              <i className="fa-solid fa-pen-nib text-3xl"></i>
               <p className="text-center text-2xl">Update</p>
             </div>
           </div>
-          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
-            <div className="flex flex-col items-center text-teal-700">
-              <i class="fa-solid fa-magnifying-glass text-3xl rotate-90"></i>
+          <div className="sm:col-span-1 w-full h-full content-center sm:mb-0 mb-3 flex flex-col items-center">
+            <div className="heartbeat flex flex-col items-center text-teal-700  hover:border hover:border-teal-700 hover:rounded-[50%] transition-all duration-100 p-5 cursor-pointer">
+              <i className="fa-solid fa-magnifying-glass text-3xl rotate-90"></i>
               <p className="text-center text-2xl">Retrieve</p>
             </div>
           </div>
-          <div className={`sm:grid-span-3 w-[ull] h-[ull] content-center`}>
-            <div className="flex flex-col items-center text-red-700">
-              <i class="fa-solid fa-trash text-3xl"></i>
+          <div className="sm:col-span-1 w-full h-full content-center sm:mb-0 mb-3 flex flex-col items-center">
+            <div className="heartbeat flex flex-col items-center text-red-700  hover:border hover:border-red-700 hover:rounded-[50%] transition-all duration-100 p-5 cursor-pointer">
+              <i className="fa-solid fa-trash text-3xl"></i>
               <p className="text-center text-2xl">Delete</p>
             </div>
           </div>

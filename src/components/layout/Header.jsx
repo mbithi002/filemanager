@@ -15,7 +15,7 @@ const Header = () => {
   const handleLogout = () => {
     authService.logout().then(() => {
       dispatch(logout())
-    canvas && setCanvas(false)
+      canvas && setCanvas(false)
     }).finally(() => navigate('/'))
   };
 
@@ -72,12 +72,12 @@ const Header = () => {
         <div
           onClick={() => setCanvas(true)}
           className="cursor-pointer">
-          <i class="fa-solid fa-ellipsis-vertical mx-3"></i>
+          <i class="fa-solid fa-bars text-2xl mx-3"></i>
         </div>
       </header>
       {
         canvas && (
-          <div className="canvas fixed z-50 min-w-[80vw] h-[100dvh] bg-gray-800 p-2 flex flex-col">
+          <div className="canvas fixed z-50 min-w-[100vw] h-[100dvh] bg-gray-800 p-2 flex flex-col">
             <div className="relative flex flex-col text-start text-gray-200">
               <div onClick={() => setCanvas(false)} className="self-end cursor-pointer">
                 <i className='fa-regular fa-circle-xmark self-end text-2xl m-2'></i>
@@ -87,28 +87,45 @@ const Header = () => {
                   <p className='text-2xl font-semibold'>Home</p>
                 </Link>
               </div>
-              <div onClick={() => setCanvas(false)} className="">
-                <Link to={'/dashboard'}>
-                  <p className="rounded-lg py-2 mx-2 my-4 px-4 bg-gray-200 text-gray-700">
-                    Dashboard
-                  </p>
-                </Link>
-              </div>
               {
                 status ? (
                   <div className="flex flex-col my-2 justify-between">
-                    <div className="">
-                      <i className='fa-solid fa-circle-user text-3xl mx-2 inline'></i>
-                      <span className="block mx-1 text-lg border border-gray-100 m-2 rounded-lg p-2 font-semibold">{userData.name}</span>
-                      <span className="block mx-1 text-lg border border-gray-100 m-2 rounded-lg p-2">{userData.email}</span>
+                    <div className="mt-5">
+                      <i className='fa-solid fa-circle-user text-3xl mx-2 my-5'></i>
+                      <span className="block mx-1 text-lg border border-gray-100 m-2 rounded-lg p-2 font-semibold my-4">
+                        {userData.name}
+                      </span>
+                      <span className="block mx-1 text-lg border border-gray-100 m-2 rounded-lg p-2 my-4">
+                        {userData.email}
+                      </span>
                     </div>
-                    <div className="flex w-full">
-                      <button onClick={() => handleLogout()} className="norder-none bg-gray-200 rounded-lg text-gray-700 text-xl font-semibold bottom-0 w-full self-center p-2 -mb-[90dvh] my-2">Logout</button>
+                    <div onClick={() => setCanvas(false)} className="pt-[2rem]">
+                      <Link to={'/dashboard'}>
+                        <p className="rounded-lg py-2 mx-2 my-4 px-4 bg-gray-200 text-gray-900 text-xl font-semibold">
+                          Dashboard
+                        </p>
+                      </Link>
+                    </div>
+                    <div className="flex w-full -mt-[8rem]">
+                      <button onClick={() => handleLogout()} className="norder-none bg-red-600 rounded-lg text-white text-xl font-semibold bottom-0 w-full self-center p-2 -mb-[90dvh] my-2">Logout</button>
                     </div>
                   </div>
                 )
                   :
-                  null
+                  (
+                    <div className="flex flex-col w-full h-full my-3">
+                      <i className='fa-solid fa-circle-user mx-2 my-3 text-3xl'></i>
+                      <div onClick={() => setCanvas(false)} className="flex flex-col">
+                        <Link to={'/signup'}>
+                          <button className="w-full my-3 p-2 rounded-lg bg-green-500 text-xl font-semibold active:bg-green-300 text-gray-700 transition-all duration-150">Signup</button></Link>
+                      </div>
+                      <div onClick={() => setCanvas(false)} className="flex flex-col">
+                        <Link to={'/login'}>
+                          <button className="w-full my-3 p-2 rounded-lg bg-blue-500 text-xl font-semibold active:bg-blue-300 active:text-gray-700 transition-all duration-150">Login</button>
+                        </Link>
+                      </div>
+                    </div>
+                  )
               }
             </div>
           </div>

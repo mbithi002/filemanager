@@ -146,12 +146,23 @@ function Search() {
       </form>
       <RenderResult result={result} />
       {/* handle history */}
-      <div className="flex flex-col items-center bg-white w-full py-2 text-black text-sm">
-        <p>Recent</p>
+      <div className="flex flex-col bg-white w-full py-2 text-black text-sm">
+        <p className='text-center'>Recent</p>
         {recents.length > 0 ? recents.map((file) => (
-          <div key={file.id} className="flex flex-row w-full my-2">
-            <i className="fa-solid fa-arrow-up mx-2 my-auto rotate-45"></i>{file.name}
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div key={file.id} className="flex flex-row w-full my-2 justify-between px-2">
+              <input
+                type="text"
+                name=""
+                id=""
+                className="block"
+                value={file.name}
+              />
+              <button type="submit" className="border-none bg-none">
+                <i className="fa-solid fa-arrow-up mx-2 my-auto -rotate-45"></i>
+              </button>
+            </div>
+          </form>
         )) : <p>No recents</p>}
       </div>
     </div>
