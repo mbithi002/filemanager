@@ -16,6 +16,11 @@ function Signup() {
   const create = async (data) => {
     setError("")
     setLoading(true)
+    if (data.password.length < 8) {
+      setLoading(false)
+      setError("Password must be atleast 8 characters!")
+      return
+    }
     try {
       const userData = await authService.createAccount(data.name, data.email, data.password)
 

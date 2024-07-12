@@ -46,8 +46,8 @@ const useVotingData = () => {
 
   const getUserVoteStatus = (userName) => {
     return voters.find((voter) => voter.user.toLowerCase() === userName.toLowerCase())
-      ? "Voted"
-      : "Not Voted";
+      ? true
+      : false;
   };
 
   return { voters, nonVoters, userReviews, getUserVoteStatus };

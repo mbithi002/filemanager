@@ -1,4 +1,5 @@
 import React from 'react';
+import { Verified } from '../../assets/assets';
 import useVotingData from '../../hooks/useVotingData';
 
 const VotingDashboard = () => {
@@ -14,15 +15,20 @@ const VotingDashboard = () => {
                     <thead>
                         <tr>
                             <th className="px-4 py-2 border">User</th>
-                            <th className="px-4 py-2 border">Email</th>
+                            <th className="px-4 py-2 border sm:flex hidden">Email</th>
                             <th className="px-4 py-2 border">Review</th>
                         </tr>
                     </thead>
                     <tbody>
                         {voters.map((voter) => (
                             <tr key={voter.email} className="hover:bg-gray-100">
-                                <td className="px-4 py-2 border">{voter.user}</td>
-                                <td className="px-4 py-2 border">{voter.email}</td>
+                                <td className="px-4 py-2 border sm:w-[11rem]">
+                                    <div className="flex flex-row content-center items-center">
+                                        <p className="">{voter.user}</p>
+                                        <div className="mx-1">{voter.email === 'luckymbithi002@gmail.com' && (<Verified w='18px' h='18px' />)}</div>
+                                    </div>
+                                </td>
+                                <td className="px-4 py-2 border sm:flex hidden">{voter.email}</td>
                                 <td className="px-4 py-2 border">{voter.review}</td>
                             </tr>
                         ))}
@@ -36,7 +42,7 @@ const VotingDashboard = () => {
                     <thead>
                         <tr>
                             <th className="px-4 py-2 border">User</th>
-                            <th className="px-4 py-2 border">Email</th>
+                            <th className="px-4 py-2 border sm:flex hidden">Email</th>
                             <th className="px-4 py-2 border">Review</th>
                         </tr>
                     </thead>
@@ -44,7 +50,7 @@ const VotingDashboard = () => {
                         {nonVoters.map((nonVoter) => (
                             <tr key={nonVoter.email} className="hover:bg-gray-100">
                                 <td className="px-4 py-2 border">{nonVoter.user}</td>
-                                <td className="px-4 py-2 border">{nonVoter.email}</td>
+                                <td className="px-4 py-2 border sm:flex hidden">{voter.email}</td>
                                 <td className="px-4 py-2 border">{nonVoter.review}</td>
                             </tr>
                         ))}

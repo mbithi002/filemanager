@@ -17,8 +17,12 @@ function Home() {
     const getVoteStatus = () => {
       if (!userData) return
       const vote = getUserVoteStatus(userData.name)
-      console.log(vote)
-      setVoteStatus(vote === 'Voted')
+      console.log(vote);
+      if (!vote) return
+      if (vote) {
+        setVoteStatus(true)
+      }
+      return
     }
     getVoteStatus()
   }, [userData, getUserVoteStatus])

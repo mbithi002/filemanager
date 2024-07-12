@@ -5,12 +5,15 @@ import HeroShare from "./HeroShare";
 import HeroTwo from "./HeroTwo";
 import HeroUpload from "./HeroUpload";
 import NoData from "./NoData";
+import Verified from "./Verified";
 
 export {
-    HeroFind, HeroOne,
+    HeroFind,
+    HeroOne,
     HeroOrganise,
     HeroShare,
     HeroTwo,
-    HeroUpload, NoData
+    HeroUpload,
+    NoData, Verified
 };
 
