@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
+import { VotingDashboard } from './components/components.js'
 import Protected from './components/layout/AuthLayout.jsx'
 import './index.css'
 import { Dashboard, Home, Login, NotFound, Signup } from './pages/pages.js'
@@ -36,15 +37,23 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: (
-          <Protected authentication={ true }>
-            <Dashboard/>
+          <Protected authentication={true}>
+            <Dashboard />
+          </Protected>
+        )
+      },
+      {
+        path: '/votes',
+        element: (
+          <Protected authentication={true}>
+            <VotingDashboard />
           </Protected>
         )
       },
       {
         path: 'not-found',
         element: (
-          <Protected authentication={ false }>
+          <Protected authentication={false}>
             <NotFound />
           </Protected>
         )
@@ -55,8 +64,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Provider store={ store }>
-      <RouterProvider router={ router }/>
+    <Provider store={store}>
+      <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>,
 )

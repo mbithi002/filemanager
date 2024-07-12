@@ -4,6 +4,7 @@ import service from '../../appwrite/config';
 import { Audio as AudioComponent, Doc as DocComponent, Download as DownloadComponent, Images as ImageComponent, Others as OthersComponent, Share as ShareComponent, Video as VideoComponent } from '../../assets/google/Icons';
 import useUserFiles from '../../hooks/useUserFiles';
 import { CustomSpinner, Toaster } from '../components';
+import FilePreviewModal from './FilePreviewModal';
 
 function Files() {
   const { userData } = useSelector((state) => state.auth);
@@ -12,10 +13,20 @@ function Files() {
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState('');
   const [filesArray, setFilesArray] = useState([]);
+  const [previewFile, setPreviewFile] = useState(null);
+
+  const openPreviewModal = (file) => {
+    setPreviewFile(file);
+  };
+
+  const closePreviewModal = () => {
+    setPreviewFile(null);
+  };
 
   const renderFileCard = (file, IconComponent, borderColor, textColor) => (
-    <div className="container file-card flex flex-col max-w-[12rem] min-w-[12rem] min-h-[12rem] m-2 rounded-md border p-2 bg-gray-100" style={{ borderColor }}>
+    <div className="relative container file-card flex flex-col max-w-[12rem] min-w-[12rem] min-h-[12rem] m-2 rounded-md border p-2 bg-gray-100" style={{ borderColor }}>
       <p className="text-center text-sm min-w-full overflow-x-hidden hover:overflow-x-visible cursor-pointer">{file.name}</p>
+      <div className="absolute right-1 cursor-pointer" onClick={() => openPreviewModal(file)}><i className="fa-solid fa-expand"></i></div>
       <div className="flex items-center mx-auto mt-3">
         <IconComponent c={borderColor} w='4rem' h='4rem' className='self-center' />
       </div>
@@ -159,6 +170,13 @@ function Files() {
           {categorizedFiles.others.length > 0 ? categorizedFiles.others.map((file) => renderFileCard(file, OthersComponent, '#9966FF', '#9966FF')) : <p className="mx-3">No other files</p>}
         </div>
       </div>
+      {previewFile && (
+        <FilePreviewModal
+          file={previewFile}
+          isOpen={!!previewFile}
+          onClose={closePreviewModal}
+        />
+      )}
     </div>
   );
 }

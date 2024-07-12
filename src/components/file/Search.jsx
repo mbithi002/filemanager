@@ -18,7 +18,6 @@ function Search() {
   useEffect(() => {
     if (allFiles) {
       setIsMounted(true);
-      // Optionally, you can set initial recents here if needed
       setRecents(Array.isArray(allFiles) ? allFiles.slice(0, 6) : Object.values(allFiles).slice(0, 6));
     }
   }, [allFiles]);
@@ -26,109 +25,71 @@ function Search() {
   const deleteFile = async (fileId, fileName) => {
     try {
       const res = await service.fileDelete(fileId);
-
       if (!res) {
         alert("Failed to delete file");
         return;
       } else {
         setResult(result.filter(file => file.$id !== fileId));
-        alert(`${fileName} 1 file deleted`);
+        alert(`${fileName} file deleted`);
       }
-
     } catch (error) {
       alert(error.message);
-      throw new error();
+      throw new Error(error);
     }
   };
 
+  const handleSearch = (query) => {
+    const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
+    const filteredFiles = filesArray.filter((file) => file.name.toLowerCase().includes(query.toLowerCase()));
+    setResult(filteredFiles);
+  };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e, queryParam = search) => {
     e.preventDefault();
-    if (!search) {
+    if (!queryParam) {
       setToaster({ message: 'Please enter a search term', type: 'error', duration: 2000 });
       return;
     }
-
-    const filesArray = allFiles ? (Array.isArray(allFiles) ? allFiles : Object.values(allFiles)) : [];
-
-    const filerFiles = () => {
-      let arr = []
-      filesArray.forEach((file) => {
-        if (file.name.toLowerCase().includes(search.toLowerCase())) {
-          arr.push(file);
-        }
-      })
-      return arr
-    }
-    const res = filerFiles()
-    const resArray = res ? (Array.isArray(res) ? res : Object.values(res)) : [];
-    resArray.forEach((file) => {
-      console.log(file.$id);
-    })
-    setResult(resArray)
+    handleSearch(queryParam);
   };
 
   const RenderResult = ({ result }) => (
     <div className="flex flex-col items-center w-full py-2 px-3 text-sm my-2">
       {result.length > 0 && (
-        <div
-          onClick={() => setResult([])}
-          className="flex flex-col self-start cursor-pointer"
-        >
+        <div onClick={() => setResult([])} className="flex flex-col self-start cursor-pointer">
           <i className="fa-solid fa-circle-xmark text-xl text-red-500"></i>
         </div>
       )}
-
-      {
-        result.length > 0 ?
-          result.map((file) => (
-            <div
-              key={file.$id}
-              className="flex flex-row justify-between w-full mb-1 px-2 py-2 rounded-sm bg-teal-500 text-white"
-            >
-              <div className=""><i className="fa-solid fa-file"></i></div>
-              <div className="">{file.name}</div>
-              <div className="">{new Date(file.$createdAt).getDate()}/{new Date(file.$createdAt).getMonth() + 1}/{new Date(file.$createdAt).getFullYear()}</div>
-              <div className="flex flex-row justify-between items-center">
-                <div
-                  className="cursor-pointer mx-1"
-                  key={file.$id}
-                  onClick={() => shareFile(file.$id)}
-                >
-                  <ShareComponent w='24px' h='24px' c='#fff' />
-                </div>
-                <div
-                  className="cursor-pointer mx-1"
-                  key={file.$id}
-                  onClick={() => downloadFile(file.$id)}
-                >
-                  <DownloadComponent w='24px' h='24px' c='#fff' />
-                </div>
-                <div
-                  key={file.$id}
-                  onClick={() => deleteFile(file.$id, file.name)}
-                  className="cursor-pointer mx-1"
-                >
-                  <i class="fa-solid fa-trash mx-2 text-xl"></i>
-                </div>
-              </div>
+      {result.length > 0 ? result.map((file) => (
+        <div key={file.$id} className="flex flex-row justify-between w-full mb-1 px-2 py-2 rounded-sm bg-teal-500 text-white">
+          <div><i className="fa-solid fa-file"></i></div>
+          <div>{file.name}</div>
+          <div>{new Date(file.$createdAt).toLocaleDateString()}</div>
+          <div className="flex flex-row justify-between items-center">
+            <div className="cursor-pointer mx-1" onClick={() => shareFile(file.$id)}>
+              <ShareComponent w='24px' h='24px' c='#fff' />
             </div>
-          )) : <p>No results found</p>
-      }
+            <div className="cursor-pointer mx-1" onClick={() => downloadFile(file.$id)}>
+              <DownloadComponent w='24px' h='24px' c='#fff' />
+            </div>
+            <div className="cursor-pointer mx-1" onClick={() => deleteFile(file.$id, file.name)}>
+              <i className="fa-solid fa-trash mx-2 text-xl"></i>
+            </div>
+          </div>
+        </div>
+      )) : <p>No results found</p>}
     </div>
   );
+
   if (!isMounted) {
-    return (
-      <CustomSpinner />
-    );
+    return <CustomSpinner />;
   }
+
   return (
     <div className='flex flex-col items-center w-full h-full sm:-mt-0 -mt-[7rem] sm:pt-0 pt-5'>
       <Toaster message={toaster.message} iconType={toaster.type} duration={toaster.duration} />
-      <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 mx-auto">
-        Search
-      </p>
-      <form onSubmit={handleSubmit} className='w-full'>
+      <p className="text-center my-5 py-2 px-4 rounded-md shadow-lg border border-gray-300 w-1/4 mx-auto">Search</p>
+      <form onSubmit={(e) => handleSubmit(e)} className='w-full'>
         <div className="flex flex-row items-center justify-around">
           <input
             type="text"
@@ -145,24 +106,15 @@ function Search() {
         </div>
       </form>
       <RenderResult result={result} />
-      {/* handle history */}
       <div className="flex flex-col bg-white w-full py-2 text-black text-sm">
         <p className='text-center'>Recent</p>
         {recents.length > 0 ? recents.map((file) => (
-          <form onSubmit={handleSubmit}>
-            <div key={file.id} className="flex flex-row w-full my-2 justify-between px-2">
-              <input
-                type="text"
-                name=""
-                id=""
-                className="block"
-                value={file.name}
-              />
-              <button type="submit" className="border-none bg-none">
-                <i className="fa-solid fa-arrow-up mx-2 my-auto -rotate-45"></i>
-              </button>
-            </div>
-          </form>
+          <div key={file.$id} className="flex flex-row w-full my-2 justify-between px-2">
+            <input type="text" value={file.name} readOnly className="block" />
+            <button onClick={(e) => handleSubmit(e, file.name)} className="border-none bg-none">
+              <i className="fa-solid fa-arrow-up mx-2 my-auto -rotate-45"></i>
+            </button>
+          </div>
         )) : <p>No recents</p>}
       </div>
     </div>

@@ -15,10 +15,13 @@ import Statistics from "./file/Statistics";
 import AuthLayout from "./layout/AuthLayout";
 import Footer from "./layout/Footer";
 import Header from "./layout/Header";
+import VotingDashboard from "./layout/VotingDashboard";
+import VotingForm from "./layout/VotingForm";
 
 export {
-    AuthLayout,
-    Button, CustomSpinner, FileUpload,
+    AuthLayout, Button,
+    CustomSpinner,
+    FileUpload,
     Files,
     Footer,
     FullLoader,
@@ -31,6 +34,6 @@ export {
     Signup,
     Spinner,
     Statistics,
-    Toaster
+    Toaster, VotingDashboard, VotingForm
 };
 

@@ -76,19 +76,53 @@ export class Service {
     }
   }
 
-  async fileDelete (fileId) {
+  async fileDelete(fileId) {
     try {
       const response = await this.bucket.deleteFile(
         conf.appwriteBucketId,
         fileId
-      )
+      );
 
       if (!response) {
         console.log("Failed to delete file");
       }
-      return response
+      return response;
     } catch (error) {
       console.log("app-write Service :: getFileDownload() ::>>> ", error);
+      return false;
+    }
+  }
+  async voteDocument(user, email, review, vote) {
+    try {
+      const response = await this.databases.createDocument(
+        conf.appwriteDatabaseId,
+        conf.voteCollection,
+        ID.unique(),
+        {
+          user,
+          email,
+          review,
+          vote,
+        }
+      );
+      return response;
+    } catch (error) {
+      console.log("app-write Service :: voteDocument() ::>>> ", error);
+      return false;
+    }
+  }
+  async getVoteDocs() {
+    try {
+      const response = await this.databases.listDocuments(
+        conf.appwriteDatabaseId,
+        conf.voteCollection
+      );
+      if (!response) {
+        return false;
+      }
+      return response;
+    } catch (error) {
+      console.log("app-write Service :: getVoteDocs() ::>>> ", error);
       return false;
     }
   }
